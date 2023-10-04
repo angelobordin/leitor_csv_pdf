@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model lote {
+  id        Int       @unique
+  nome      String    @unique @db.VarChar(100)
+  ativo     Boolean?
+  criado_em DateTime?
+  boleto    boleto[]
+}
+
+model boleto {
+  id              Int      @unique @default(autoincrement())
+  nome_sacado     String?  @db.VarChar(255)
+  id_lote         Int
+  lote            lote     @relation(fields: [id_lote], references: [id])
+  valor           Decimal  @db.Decimal(10, 2)
+  linha_digitavel String   @db.VarChar(255)
+  ativo           Boolean
+  criado_em       DateTime
+
+  @@index([id_lote], map: "id_lote")
+}
